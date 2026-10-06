@@ -426,6 +426,102 @@ function showIssuePage() {
   showPage("issuePage");
 }
 
+/* เปิดหน้ารับอุปกรณ์ */
+function showReceivePage() {
+
+  const select = document.getElementById("receiveItem");
+
+  select.innerHTML = "";
+
+  if (stock.length === 0) {
+
+    const option = document.createElement("option");
+    option.textContent = "ยังไม่มีอุปกรณ์ในสต๊อก";
+    option.value = "";
+
+    select.appendChild(option);
+
+  } else {
+
+    stock.forEach(item => {
+
+      const option = document.createElement("option");
+
+      option.value = item.id;
+
+      option.textContent =
+        item.name +
+        (item.model ? " (" + item.model + ")" : "") +
+        " — คงเหลือ " +
+        item.quantity +
+        " " +
+        item.unit;
+
+      select.appendChild(option);
+
+    });
+
+  }
+
+  showPage("receivePage");
+}
+
+
+/* รับอุปกรณ์เข้า */
+function receiveItem() {
+
+  const itemId =
+    Number(document.getElementById("receiveItem").value);
+
+  const quantity =
+    Number(document.getElementById("receiveQuantity").value);
+
+  const person =
+    document.getElementById("receivePerson").value.trim();
+
+  const note =
+    document.getElementById("receiveNote").value.trim();
+
+  const item =
+    stock.find(x => x.id === itemId);
+
+  if (!item) {
+    alert("กรุณาเลือกอุปกรณ์");
+    return;
+  }
+
+  if (!quantity || quantity <= 0) {
+    alert("กรุณากรอกจำนวนที่รับเข้า");
+    return;
+  }
+
+  /* เพิ่มจำนวนเข้าสต๊อก */
+  item.quantity += quantity;
+
+  saveStock();
+
+  alert(
+    "รับอุปกรณ์เข้าเรียบร้อยแล้ว\n\n" +
+    item.name +
+    "\n" +
+    "รับเข้า " +
+    quantity +
+    " " +
+    item.unit +
+    "\n" +
+    "คงเหลือ " +
+    item.quantity +
+    " " +
+    item.unit
+  );
+
+  document.getElementById("receiveQuantity").value = "";
+  document.getElementById("receivePerson").value = "";
+  document.getElementById("receiveNote").value = "";
+
+  showStock();
+}
+
 
 /* เบิกอุปกรณ์ */
 function issueItem() {
