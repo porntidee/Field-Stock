@@ -448,6 +448,7 @@ function issueItem() {
     model: item.model,
     quantity: quantity,
     unit: item.unit,
+    remaining: item.quantity,
     person: person,
     location: location,
     note: note,
@@ -571,6 +572,7 @@ function showHistory() {
           <strong>📦 ${history.itemName}</strong><br>
           ${history.model ? "รุ่น: " + history.model + "<br>" : ""}
           <b>เบิก: ${history.quantity} ${history.unit}</b><br>
+          📊 คงเหลือหลังเบิก: ${history.remaining} ${history.unit}<br>
           ${history.person ? "👤 ผู้เบิก: " + history.person + "<br>" : ""}
           ${history.location ? "📍 หน้างาน: " + history.location + "<br>" : ""}
           🕐 วันที่: ${history.date}<br>
