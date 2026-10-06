@@ -539,4 +539,25 @@ function updateSummary() {
   const itemCount =
     document.getElementById("itemCount");
 
-  c
+  const totalQuantity =
+    document.getElementById("totalQuantity");
+
+  if (!itemCount || !totalQuantity) return;
+
+  itemCount.textContent = stock.length;
+
+  totalQuantity.textContent =
+    stock.reduce(
+      (sum, item) => sum + Number(item.quantity || 0),
+      0
+    );
+}
+
+
+/* เริ่มต้นระบบ */
+updateSummary();
+
+</script>
+
+</body>
+</html>
