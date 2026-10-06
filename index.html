@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Field Stock</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f6f8;
+      color: #222;
+    }
+
+    .header {
+      background: #1565c0;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #1565c0;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .button.green {
+      background: #2e7d32;
+    }
+
+    .button.orange {
+      background: #ef6c00;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h1>📦 Field Stock</h1>
+    <div>ระบบจัดการสต๊อกอุปกรณ์ภาคสนาม</div>
+  </div>
+
+  <div class="container">
+
+    <div class="card">
+      <h2>📋 จัดการสต๊อก</h2>
+      <button class="button">ดูรายการอุปกรณ์</button>
+      <button class="button green">เพิ่มอุปกรณ์</button>
+      <button class="button orange">เบิกอุปกรณ์</button>
+    </div>
+
+    <div class="card">
+      <h2>📊 สรุปสต๊อก</h2>
+      <p>อุปกรณ์ทั้งหมด: <b>0</b> รายการ</p>
+      <p>คงเหลือ: <b>0</b> รายการ</p>
+      <p>ถูกเบิกใช้: <b>0</b> รายการ</p>
+    </div>
+
+  </div>
+
+</body>
+</html>
