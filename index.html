@@ -492,63 +492,78 @@ function showReceivePage() {
 /* รับอุปกรณ์เข้า */
 function receiveItem() {
 
-  const itemId =
-    Number(document.getElementById("receiveItem").value);
+    const itemId =
+        Number(document.getElementById("receiveItem").value);
 
-  const quantity =
-    Number(document.getElementById("receiveQuantity").value);
+    const quantity =
+        Number(document.getElementById("receiveQuantity").value);
 
-  const person =
-    document.getElementById("receivePerson").value.trim();
+    const person =
+        document.getElementById("receivePerson").value.trim();
 
-  const note =
-    document.getElementById("receiveNote").value.trim();
+    const note =
+        document.getElementById("receiveNote").value.trim();
 
-  const item =
-    stock.find(x => x.id === itemId);
+    const item =
+        stock.find(x => x.id === itemId);
 
-  if (!item) {
-    alert("กรุณาเลือกอุปกรณ์");
-    return;
-  }
+    if (!item) {
+        alert("กรุณาเลือกอุปกรณ์");
+        return;
+    }
 
-  if (!quantity || quantity <= 0) {
-    alert("กรุณากรอกจำนวนที่รับเข้า");
-    return;
-  }
+    if (!quantity || quantity <= 0) {
+        alert("กรุณากรอกจำนวนที่รับเข้า");
+        return;
+    }
 
-  /* เพิ่มจำนวนเข้าสต๊อก */
-  item.quantity += quantity;
+    /* เพิ่มจำนวนเข้าสต๊อก */
+    item.quantity += quantity;
 
-  /* บันทึกประวัติการรับเข้า */
-  const receiveHistory =
-    JSON.parse(localStorage.getItem("receiveHistory")) || [];
+    /* บันทึกประวัติการรับเข้า */
+    const receiveHistory =
+        JSON.parse(localStorage.getItem("receiveHistory")) || [];
 
-  receiveHistory.push({
-    id: Date.now(),
-    itemId: item.id,
-    itemName: item.name,
-    model: item.model,
-    quantity: quantity,
-    unit: item.unit,
-    remaining: item.quantity,
-    person: person,
-    note: note,
-    date: new Date().toLocaleString("th-TH")
-  });
+    receiveHistory.push({
+        id: Date.now(),
+        itemId: item.id,
+        itemName: item.name,
+        model: item.model,
+        quantity: quantity,
+        unit: item.unit,
+        remaining: item.quantity,
+        person: person,
+        note: note,
+        date: new Date().toLocaleString("th-TH")
+    });
 
-  localStorage.setItem(
-    "receiveHistory",
-    JSON.stringify(receiveHistory)
-  );
+    localStorage.setItem(
+        "receiveHistory",
+        JSON.stringify(receiveHistory)
+    );
 
-  saveStock();
+    saveStock();
 
-  alert(
-    "รับอุปกรณ์เข้าเรียบร้อยแล้ว\n\n" +
-    item.name +
-    "\n" +
-    "รับเข้า " +
+    alert(
+        "รับอุปกรณ์เข้าเรียบร้อยแล้ว\n\n" +
+        item.name +
+        "\nรับเข้า " +
+        quantity +
+        " " +
+        item.unit +
+        "\nคงเหลือ " +
+        item.quantity +
+        " " +
+        item.unit
+    );
+
+    /* ล้างข้อมูล */
+    document.getElementById("receiveQuantity").value = "";
+    document.getElementById("receivePerson").value = "";
+    document.getElementById("receiveNote").value = "";
+
+    showStock();
+}
 
 
 /* เบิกอุปกรณ์ */
