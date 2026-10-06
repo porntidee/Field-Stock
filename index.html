@@ -1,542 +1,542 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Field Stock</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Stock</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      color: #222;
-    }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f3f4f6;
+  color: #222;
+}
 
-    .header {
-      background: #1565c0;
-      color: white;
-      padding: 20px 16px;
-      text-align: center;
-    }
+.header {
+  background: #1f2937;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
 
-    .header h1 {
-      margin: 0 0 6px;
-      font-size: 25px;
-    }
+.header h1 {
+  margin: 0 0 5px;
+}
 
-    .header p {
-      margin: 0;
-      font-size: 14px;
-    }
+.container {
+  max-width: 600px;
+  margin: auto;
+  padding: 15px;
+}
 
-    .container {
-      max-width: 600px;
-      margin: auto;
-      padding: 16px;
-    }
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
 
-    .card {
-      background: white;
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
+button {
+  width: 100%;
+  padding: 13px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
 
-    .card h2 {
-      margin: 0 0 15px;
-      font-size: 19px;
-    }
+.btn-add {
+  background: #16a34a;
+  color: white;
+}
 
-    label {
-      display: block;
-      font-size: 14px;
-      margin: 10px 0 5px;
-      font-weight: bold;
-    }
+.btn-issue {
+  background: #dc2626;
+  color: white;
+}
 
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #d8dce0;
-      border-radius: 8px;
-      font-size: 16px;
-      background: white;
-    }
+.btn-list {
+  background: #2563eb;
+  color: white;
+}
 
-    textarea {
-      min-height: 80px;
-      resize: vertical;
-    }
+.btn-back {
+  background: #6b7280;
+  color: white;
+}
 
-    .btn {
-      width: 100%;
-      border: none;
-      border-radius: 8px;
-      padding: 13px;
-      margin-top: 14px;
-      font-size: 16px;
-      cursor: pointer;
-    }
+input, select, textarea {
+  width: 100%;
+  padding: 11px;
+  margin-top: 6px;
+  margin-bottom: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  font-size: 15px;
+}
 
-    .btn-primary {
-      background: #1565c0;
-      color: white;
-    }
+label {
+  font-weight: bold;
+}
 
-    .btn-secondary {
-      background: #e9eef5;
-      color: #333;
-    }
+.item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
 
-    .stock-item {
-      border: 1px solid #e0e4e8;
-      border-radius: 10px;
-      padding: 13px;
-      margin-bottom: 10px;
-    }
+.item strong {
+  font-size: 17px;
+}
 
-    .stock-name {
-      font-size: 17px;
-      font-weight: bold;
-    }
+.hidden {
+  display: none;
+}
 
-    .stock-detail {
-      font-size: 14px;
-      color: #666;
-      margin-top: 5px;
-      line-height: 1.6;
-    }
+.summary {
+  display: flex;
+  gap: 10px;
+}
 
-    .empty {
-      text-align: center;
-      color: #888;
-      padding: 20px;
-    }
+.summary-box {
+  flex: 1;
+  background: #f9fafb;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+}
 
-    .hidden {
-      display: none;
-    }
-
-    .summary {
-      display: flex;
-      gap: 10px;
-    }
-
-    .summary-box {
-      flex: 1;
-      background: #f1f5f9;
-      border-radius: 10px;
-      padding: 13px;
-      text-align: center;
-    }
-
-    .summary-number {
-      display: block;
-      font-size: 24px;
-      font-weight: bold;
-    }
-  </style>
+.summary-number {
+  font-size: 24px;
+  font-weight: bold;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="header">
-    <h1>📦 Field Stock</h1>
-    <p>ระบบจัดการสต๊อกอุปกรณ์ภาคสนาม</p>
-  </div>
+<div class="header">
+  <h1>📦 Field Stock</h1>
+  <div>ระบบจัดการสต๊อกอุปกรณ์ภาคสนาม</div>
+</div>
 
-  <div class="container">
+<div class="container">
 
-    <!-- เมนู -->
+  <!-- หน้าหลัก -->
+  <div id="homePage">
+
     <div class="card">
       <h2>📋 จัดการสต๊อก</h2>
 
-      <button class="btn btn-primary" onclick="showAddForm()">
+      <button class="btn-add" onclick="showPage('addPage')">
         ➕ เพิ่มอุปกรณ์
       </button>
 
-      <button class="btn btn-secondary" onclick="showStock()">
+      <button class="btn-issue" onclick="showIssuePage()">
+        📤 เบิกอุปกรณ์
+      </button>
+
+      <button class="btn-list" onclick="showStock()">
         📦 ดูรายการอุปกรณ์
       </button>
     </div>
 
-
-    <!-- สรุป -->
     <div class="card">
       <h2>📊 สรุปสต๊อก</h2>
 
       <div class="summary">
-
         <div class="summary-box">
-          <span class="summary-number" id="itemCount">0</span>
-          รายการ
+          <div>รายการ</div>
+          <div class="summary-number" id="itemCount">0</div>
         </div>
 
         <div class="summary-box">
-          <span class="summary-number" id="totalQty">0</span>
-          ชิ้น
+          <div>จำนวนรวม</div>
+          <div class="summary-number" id="totalQuantity">0</div>
         </div>
-
       </div>
     </div>
 
+  </div>
 
-    <!-- เพิ่มอุปกรณ์ -->
-    <div class="card hidden" id="addForm">
 
+  <!-- เพิ่มอุปกรณ์ -->
+  <div id="addPage" class="hidden">
+
+    <div class="card">
       <h2>➕ เพิ่มอุปกรณ์</h2>
 
       <label>ชื่ออุปกรณ์ *</label>
-      <input
-        type="text"
-        id="name"
-        placeholder="เช่น Receiving Card"
-      >
+      <input id="name" placeholder="เช่น MRV336">
 
       <label>รุ่น / Model</label>
-      <input
-        type="text"
-        id="model"
-        placeholder="เช่น MRV336"
-      >
+      <input id="model" placeholder="เช่น MRV336">
 
       <label>จำนวน *</label>
-      <input
-        type="number"
-        id="quantity"
-        min="1"
-        placeholder="เช่น 10"
-      >
+      <input id="quantity" type="number" min="1" placeholder="จำนวน">
 
       <label>หน่วย</label>
       <select id="unit">
-        <option value="ชิ้น">ชิ้น</option>
-        <option value="ตัว">ตัว</option>
-        <option value="ชุด">ชุด</option>
-        <option value="อัน">อัน</option>
-        <option value="เส้น">เส้น</option>
-        <option value="กล่อง">กล่อง</option>
+        <option>ชิ้น</option>
+        <option>ตัว</option>
+        <option>ชุด</option>
+        <option>อัน</option>
+        <option>เส้น</option>
+        <option>กล่อง</option>
       </select>
 
       <label>ตำแหน่งจัดเก็บ</label>
-      <input
-        type="text"
-        id="location"
-        placeholder="เช่น ห้องเก็บของ / ตู้ A"
-      >
+      <input id="location" placeholder="เช่น ห้องเก็บของ">
 
       <label>หมายเหตุ</label>
-      <textarea
-        id="note"
-        placeholder="รายละเอียดเพิ่มเติม"
-      ></textarea>
+      <textarea id="note" placeholder="รายละเอียดเพิ่มเติม"></textarea>
 
-      <button
-        class="btn btn-primary"
-        onclick="addEquipment()">
+      <button class="btn-add" onclick="addItem()">
         💾 บันทึกอุปกรณ์
       </button>
 
-      <button
-        class="btn btn-secondary"
-        onclick="hideAddForm()">
-        ยกเลิก
+      <button class="btn-back" onclick="showPage('homePage')">
+        ↩️ กลับ
       </button>
-
     </div>
 
+  </div>
 
-    <!-- รายการอุปกรณ์ -->
-    <div class="card hidden" id="stockPage">
 
+  <!-- เบิกอุปกรณ์ -->
+  <div id="issuePage" class="hidden">
+
+    <div class="card">
+      <h2>📤 เบิกอุปกรณ์</h2>
+
+      <label>เลือกอุปกรณ์ *</label>
+      <select id="issueItem"></select>
+
+      <label>จำนวนที่เบิก *</label>
+      <input id="issueQuantity" type="number" min="1" placeholder="จำนวน">
+
+      <label>ผู้เบิก</label>
+      <input id="issuePerson" placeholder="ชื่อผู้เบิก">
+
+      <label>จุดใช้งาน / หน้างาน</label>
+      <input id="issueLocation" placeholder="เช่น ทล.1 กม.121">
+
+      <label>หมายเหตุ</label>
+      <textarea id="issueNote" placeholder="รายละเอียดเพิ่มเติม"></textarea>
+
+      <button class="btn-issue" onclick="issueItem()">
+        ✅ ยืนยันการเบิก
+      </button>
+
+      <button class="btn-back" onclick="showPage('homePage')">
+        ↩️ กลับ
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- รายการสต๊อก -->
+  <div id="stockPage" class="hidden">
+
+    <div class="card">
       <h2>📦 รายการอุปกรณ์</h2>
 
       <input
-        type="text"
         id="search"
         placeholder="🔎 ค้นหาอุปกรณ์..."
         oninput="showStock()"
       >
 
-      <br><br>
-
       <div id="stockList"></div>
 
+      <button class="btn-back" onclick="showPage('homePage')">
+        ↩️ กลับ
+      </button>
     </div>
 
   </div>
 
+</div>
+
 
 <script>
 
-  // โหลดข้อมูลจากเครื่อง
-  let equipment =
-    JSON.parse(localStorage.getItem("fieldStock")) || [];
+let stock = JSON.parse(localStorage.getItem("fieldStock")) || [];
 
 
-  // บันทึกข้อมูล
-  function saveData() {
+/* เปลี่ยนหน้า */
+function showPage(pageId) {
 
-    localStorage.setItem(
-      "fieldStock",
-      JSON.stringify(equipment)
-    );
+  document.getElementById("homePage").classList.add("hidden");
+  document.getElementById("addPage").classList.add("hidden");
+  document.getElementById("issuePage").classList.add("hidden");
+  document.getElementById("stockPage").classList.add("hidden");
 
+  document.getElementById(pageId).classList.remove("hidden");
+
+  updateSummary();
+}
+
+
+/* เพิ่มอุปกรณ์ */
+function addItem() {
+
+  const name = document.getElementById("name").value.trim();
+  const model = document.getElementById("model").value.trim();
+  const quantity = Number(document.getElementById("quantity").value);
+  const unit = document.getElementById("unit").value;
+  const location = document.getElementById("location").value.trim();
+  const note = document.getElementById("note").value.trim();
+
+  if (!name) {
+    alert("กรุณากรอกชื่ออุปกรณ์");
+    return;
   }
 
+  if (!quantity || quantity <= 0) {
+    alert("กรุณากรอกจำนวนให้ถูกต้อง");
+    return;
+  }
 
-  // เปิดหน้าเพิ่มอุปกรณ์
-  function showAddForm() {
+  const item = {
+    id: Date.now(),
+    name,
+    model,
+    quantity,
+    unit,
+    location,
+    note,
+    createdAt: new Date().toLocaleString("th-TH")
+  };
 
-    document
-      .getElementById("addForm")
-      .classList.remove("hidden");
+  stock.push(item);
 
-    document
-      .getElementById("stockPage")
-      .classList.add("hidden");
+  saveStock();
 
-    window.scrollTo({
-      top: document.getElementById("addForm").offsetTop,
-      behavior: "smooth"
+  document.getElementById("name").value = "";
+  document.getElementById("model").value = "";
+  document.getElementById("quantity").value = "";
+  document.getElementById("location").value = "";
+  document.getElementById("note").value = "";
+
+  alert("เพิ่มอุปกรณ์เรียบร้อยแล้ว");
+
+  showStock();
+}
+
+
+/* เปิดหน้าเบิก */
+function showIssuePage() {
+
+  const select = document.getElementById("issueItem");
+
+  select.innerHTML = "";
+
+  if (stock.length === 0) {
+
+    const option = document.createElement("option");
+    option.textContent = "ยังไม่มีอุปกรณ์ในสต๊อก";
+    option.value = "";
+
+    select.appendChild(option);
+
+  } else {
+
+    stock.forEach(item => {
+
+      const option = document.createElement("option");
+
+      option.value = item.id;
+
+      option.textContent =
+        item.name +
+        (item.model ? " (" + item.model + ")" : "") +
+        " — คงเหลือ " +
+        item.quantity +
+        " " +
+        item.unit;
+
+      select.appendChild(option);
+
     });
 
   }
 
+  showPage("issuePage");
+}
 
-  // ปิดหน้าเพิ่ม
-  function hideAddForm() {
 
-    document
-      .getElementById("addForm")
-      .classList.add("hidden");
+/* เบิกอุปกรณ์ */
+function issueItem() {
 
+  const itemId = Number(document.getElementById("issueItem").value);
+  const quantity = Number(document.getElementById("issueQuantity").value);
+
+  const person =
+    document.getElementById("issuePerson").value.trim();
+
+  const location =
+    document.getElementById("issueLocation").value.trim();
+
+  const note =
+    document.getElementById("issueNote").value.trim();
+
+  const item = stock.find(x => x.id === itemId);
+
+  if (!item) {
+    alert("กรุณาเลือกอุปกรณ์");
+    return;
+  }
+
+  if (!quantity || quantity <= 0) {
+    alert("กรุณากรอกจำนวนที่ต้องการเบิก");
+    return;
+  }
+
+  if (quantity > item.quantity) {
+    alert(
+      "จำนวนไม่เพียงพอ\n" +
+      "คงเหลือ " +
+      item.quantity +
+      " " +
+      item.unit
+    );
+    return;
   }
 
 
-  // เพิ่มอุปกรณ์
-  function addEquipment() {
-
-    const name =
-      document.getElementById("name").value.trim();
-
-    const model =
-      document.getElementById("model").value.trim();
-
-    const quantity =
-      Number(document.getElementById("quantity").value);
-
-    const unit =
-      document.getElementById("unit").value;
-
-    const location =
-      document.getElementById("location").value.trim();
-
-    const note =
-      document.getElementById("note").value.trim();
+  /* ตัดสต๊อก */
+  item.quantity -= quantity;
 
 
-    // ตรวจสอบข้อมูล
-    if (!name) {
+  /* บันทึกข้อมูลการเบิก */
+  const issueHistory =
+    JSON.parse(localStorage.getItem("issueHistory")) || [];
 
-      alert("กรุณากรอกชื่ออุปกรณ์");
+  issueHistory.push({
+    id: Date.now(),
+    itemId: item.id,
+    itemName: item.name,
+    model: item.model,
+    quantity: quantity,
+    unit: item.unit,
+    person: person,
+    location: location,
+    note: note,
+    date: new Date().toLocaleString("th-TH")
+  });
 
-      return;
-    }
-
-
-    if (!quantity || quantity < 1) {
-
-      alert("กรุณากรอกจำนวนให้ถูกต้อง");
-
-      return;
-    }
-
-
-    // สร้างรายการใหม่
-    const newEquipment = {
-
-      id: Date.now(),
-
-      name: name,
-
-      model: model,
-
-      quantity: quantity,
-
-      unit: unit,
-
-      location: location,
-
-      note: note,
-
-      createdAt:
-        new Date().toLocaleString("th-TH")
-
-    };
+  localStorage.setItem(
+    "issueHistory",
+    JSON.stringify(issueHistory)
+  );
 
 
-    equipment.push(newEquipment);
+  saveStock();
 
 
-    // บันทึก
-    saveData();
+  alert(
+    "เบิกอุปกรณ์เรียบร้อยแล้ว\n\n" +
+    item.name +
+    "\n" +
+    "เบิก " +
+    quantity +
+    " " +
+    item.unit +
+    "\n" +
+    "คงเหลือ " +
+    item.quantity +
+    " " +
+    item.unit
+  );
 
 
-    // ล้างแบบฟอร์ม
-    document.getElementById("name").value = "";
-    document.getElementById("model").value = "";
-    document.getElementById("quantity").value = "";
-    document.getElementById("location").value = "";
-    document.getElementById("note").value = "";
+  document.getElementById("issueQuantity").value = "";
+  document.getElementById("issuePerson").value = "";
+  document.getElementById("issueLocation").value = "";
+  document.getElementById("issueNote").value = "";
+
+  showStock();
+}
 
 
-    updateSummary();
+/* แสดงสต๊อก */
+function showStock() {
+
+  const search =
+    document.getElementById("search")?.value.toLowerCase() || "";
+
+  const list =
+    document.getElementById("stockList");
+
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  const filtered =
+    stock.filter(item =>
+      item.name.toLowerCase().includes(search) ||
+      item.model.toLowerCase().includes(search)
+    );
 
 
-    alert("เพิ่มอุปกรณ์เรียบร้อยแล้ว");
+  if (filtered.length === 0) {
 
+    list.innerHTML =
+      "<p>ไม่พบอุปกรณ์</p>";
 
-    showStock();
-
-  }
-
-
-  // แสดงรายการ
-  function showStock() {
-
-    document
-      .getElementById("stockPage")
-      .classList.remove("hidden");
-
-
-    const search =
-      document
-        .getElementById("search")
-        .value
-        .toLowerCase();
-
-
-    const list =
-      document.getElementById("stockList");
-
-
-    const filtered =
-      equipment.filter(item =>
-
-        item.name
-          .toLowerCase()
-          .includes(search)
-
-        ||
-
-        item.model
-          .toLowerCase()
-          .includes(search)
-
-      );
-
-
-    list.innerHTML = "";
-
-
-    if (filtered.length === 0) {
-
-      list.innerHTML =
-        '<div class="empty">ยังไม่มีอุปกรณ์ในสต๊อก</div>';
-
-      return;
-    }
-
+  } else {
 
     filtered.forEach(item => {
 
       const div =
         document.createElement("div");
 
-      div.className = "stock-item";
-
+      div.className = "item";
 
       div.innerHTML = `
-
-        <div class="stock-name">
-          ${item.name}
-        </div>
-
-        <div class="stock-detail">
-
-          รุ่น: ${item.model || "-"}<br>
-
-          จำนวน: <b>
-            ${item.quantity}
-          </b> ${item.unit}<br>
-
-          จัดเก็บที่:
-          ${item.location || "-"}<br>
-
-          หมายเหตุ:
-          ${item.note || "-"}<br>
-
-          เพิ่มเมื่อ:
-          ${item.createdAt}
-
-        </div>
-
+        <strong>📦 ${item.name}</strong><br>
+        ${item.model ? "รุ่น: " + item.model + "<br>" : ""}
+        <b>คงเหลือ: ${item.quantity} ${item.unit}</b><br>
+        ${item.location ? "📍 " + item.location + "<br>" : ""}
+        ${item.note ? "📝 " + item.note : ""}
       `;
-
 
       list.appendChild(div);
 
     });
 
-
-    updateSummary();
-
   }
 
-
-  // สรุปจำนวน
-  function updateSummary() {
-
-    const itemCount =
-      equipment.length;
+  showPage("stockPage");
+}
 
 
-    const totalQty =
-      equipment.reduce(
+/* บันทึกสต๊อก */
+function saveStock() {
 
-        (sum, item) =>
-          sum + Number(item.quantity),
+  localStorage.setItem(
+    "fieldStock",
+    JSON.stringify(stock)
+  );
 
-        0
-
-      );
-
-
-    document
-      .getElementById("itemCount")
-      .textContent = itemCount;
-
-
-    document
-      .getElementById("totalQty")
-      .textContent = totalQty;
-
-  }
-
-
-  // เริ่มต้น
   updateSummary();
+}
 
-</script>
 
-</body>
-</html>
+/* สรุปจำนวน */
+function updateSummary() {
+
+  const itemCount =
+    document.getElementById("itemCount");
+
+  c
