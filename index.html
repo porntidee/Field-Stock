@@ -156,6 +156,10 @@ label {
         📥 รับอุปกรณ์เข้า
       </button>
 
+      <button class="btn-add" onclick="showReceiveHistory()">
+        📋 ประวัติการรับเข้า
+      </button>
+
     </div>
 
     <div class="card">
@@ -291,6 +295,21 @@ label {
 
 </div>
 
+<!-- ประวัติการรับเข้า -->
+<div id="receiveHistoryPage" class="hidden">
+
+  <div class="card">
+    <h2>📋 ประวัติการรับเข้า</h2>
+
+    <div id="receiveHistoryList"></div>
+
+    <button class="btn-back" onclick="showPage('homePage')">
+      ↩️ กลับ
+    </button>
+  </div>
+
+</div>
+  
 <!-- รับอุปกรณ์เข้า -->
 <div id="receivePage" class="hidden">
 
@@ -332,7 +351,10 @@ function showPage(pageId) {
   document.getElementById("addPage").classList.add("hidden");
   document.getElementById("issuePage").classList.add("hidden");
   document.getElementById("stockPage").classList.add("hidden");
-
+  document.getElementById("historyPage").classList.add("hidden");
+  document.getElementById("receivePage").classList.add("hidden");
+  document.getElementById("receiveHistoryPage").classList.add("hidden");
+  
   document.getElementById(pageId).classList.remove("hidden");
 
   updateSummary();
@@ -498,6 +520,28 @@ function receiveItem() {
   /* เพิ่มจำนวนเข้าสต๊อก */
   item.quantity += quantity;
 
+  /* บันทึกประวัติการรับเข้า */
+  const receiveHistory =
+    JSON.parse(localStorage.getItem("receiveHistory")) || [];
+
+  receiveHistory.push({
+    id: Date.now(),
+    itemId: item.id,
+    itemName: item.name,
+    model: item.model,
+    quantity: quantity,
+    unit: item.unit,
+    remaining: item.quantity,
+    person: person,
+    note: note,
+    date: new Date().toLocaleString("th-TH")
+  });
+
+  localStorage.setItem(
+    "receiveHistory",
+    JSON.stringify(receiveHistory)
+  );
+
   saveStock();
 
   alert(
@@ -505,22 +549,6 @@ function receiveItem() {
     item.name +
     "\n" +
     "รับเข้า " +
-    quantity +
-    " " +
-    item.unit +
-    "\n" +
-    "คงเหลือ " +
-    item.quantity +
-    " " +
-    item.unit
-  );
-
-  document.getElementById("receiveQuantity").value = "";
-  document.getElementById("receivePerson").value = "";
-  document.getElementById("receiveNote").value = "";
-
-  showStock();
-}
 
 
 /* เบิกอุปกรณ์ */
@@ -713,6 +741,50 @@ function showHistory() {
       });
 
   }
+function showReceiveHistory() {
+
+  const list = document.getElementById("receiveHistoryList");
+
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  const receiveHistory =
+    JSON.parse(localStorage.getItem("receiveHistory")) || [];
+
+  if (receiveHistory.length === 0) {
+
+    list.innerHTML = "<p>ยังไม่มีประวัติการรับเข้า</p>";
+
+  } else {
+
+    receiveHistory
+      .slice()
+      .reverse()
+      .forEach(history => {
+
+        const div = document.createElement("div");
+
+        div.className = "item";
+
+        div.innerHTML = `
+          <strong>📦 ${history.itemName}</strong><br>
+          ${history.model ? "รุ่น: " + history.model + "<br>" : ""}
+          <b>รับเข้า: ${history.quantity} ${history.unit}</b><br>
+          ${history.person ? "👤 ผู้รับเข้า: " + history.person + "<br>" : ""}
+          📊 คงเหลือหลังรับเข้า: ${history.remaining} ${history.unit}<br>
+          🕐 วันที่: ${history.date}<br>
+          ${history.note ? "📝 " + history.note : ""}
+        `;
+
+        list.appendChild(div);
+
+      });
+
+  }
+
+  showPage("receiveHistoryPage");
+}
 
   showPage("historyPage");
 }
