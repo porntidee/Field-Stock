@@ -6,61 +6,147 @@
   <title>Field Stock</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f5f6f8;
+      background: #f4f6f8;
       color: #222;
     }
 
     .header {
       background: #1565c0;
       color: white;
-      padding: 20px;
+      padding: 20px 16px;
       text-align: center;
     }
 
     .header h1 {
+      margin: 0 0 6px;
+      font-size: 25px;
+    }
+
+    .header p {
       margin: 0;
-      font-size: 24px;
+      font-size: 14px;
     }
 
     .container {
-      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      padding: 16px;
     }
 
     .card {
       background: white;
-      border-radius: 12px;
-      padding: 18px;
+      border-radius: 14px;
+      padding: 16px;
       margin-bottom: 15px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     .card h2 {
-      margin-top: 0;
-      font-size: 20px;
+      margin: 0 0 14px;
+      font-size: 19px;
     }
 
-    .button {
-      display: block;
+    input {
       width: 100%;
-      padding: 14px;
-      margin-top: 10px;
+      padding: 13px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    button {
       border: none;
       border-radius: 8px;
-      background: #1565c0;
-      color: white;
-      font-size: 16px;
+      padding: 11px 14px;
+      font-size: 15px;
       cursor: pointer;
     }
 
-    .button.green {
-      background: #2e7d32;
+    .btn-add {
+      width: 100%;
+      background: #1565c0;
+      color: white;
+      padding: 13px;
     }
 
-    .button.orange {
-      background: #ef6c00;
+    .search {
+      margin-bottom: 0;
+    }
+
+    .stock-item {
+      border: 1px solid #e1e5e8;
+      border-radius: 10px;
+      padding: 13px;
+      margin-bottom: 10px;
+    }
+
+    .stock-name {
+      font-size: 17px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stock-number {
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 7px;
+    }
+
+    .actions button {
+      flex: 1;
+    }
+
+    .minus {
+      background: #e53935;
+      color: white;
+    }
+
+    .plus {
+      background: #2e7d32;
+      color: white;
+    }
+
+    .delete {
+      background: #757575;
+      color: white;
+    }
+
+    .empty {
+      text-align: center;
+      color: #888;
+      padding: 20px 5px;
+    }
+
+    .summary {
+      display: flex;
+      gap: 10px;
+    }
+
+    .summary-box {
+      flex: 1;
+      background: #f1f5f9;
+      border-radius: 10px;
+      padding: 13px;
+      text-align: center;
+    }
+
+    .summary-number {
+      display: block;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 4px;
     }
   </style>
 </head>
@@ -69,26 +155,224 @@
 
   <div class="header">
     <h1>📦 Field Stock</h1>
-    <div>ระบบจัดการสต๊อกอุปกรณ์ภาคสนาม</div>
+    <p>ระบบจัดการสต๊อกอุปกรณ์ภาคสนาม</p>
   </div>
 
   <div class="container">
 
     <div class="card">
-      <h2>📋 จัดการสต๊อก</h2>
-      <button class="button">ดูรายการอุปกรณ์</button>
-      <button class="button green">เพิ่มอุปกรณ์</button>
-      <button class="button orange">เบิกอุปกรณ์</button>
+      <h2>📊 สรุปสต๊อก</h2>
+
+      <div class="summary">
+        <div class="summary-box">
+          <span class="summary-number" id="itemCount">0</span>
+          รายการ
+        </div>
+
+        <div class="summary-box">
+          <span class="summary-number" id="totalStock">0</span>
+          ชิ้น
+        </div>
+      </div>
     </div>
 
     <div class="card">
-      <h2>📊 สรุปสต๊อก</h2>
-      <p>อุปกรณ์ทั้งหมด: <b>0</b> รายการ</p>
-      <p>คงเหลือ: <b>0</b> รายการ</p>
-      <p>ถูกเบิกใช้: <b>0</b> รายการ</p>
+      <h2>➕ เพิ่มอุปกรณ์</h2>
+
+      <input
+        type="text"
+        id="itemName"
+        placeholder="ชื่ออุปกรณ์ เช่น MRV336"
+      >
+
+      <input
+        type="number"
+        id="itemQty"
+        placeholder="จำนวน"
+        min="1"
+      >
+
+      <button class="btn-add" onclick="addItem()">
+        เพิ่มเข้าสต๊อก
+      </button>
+    </div>
+
+    <div class="card">
+      <h2>📦 รายการอุปกรณ์</h2>
+
+      <input
+        class="search"
+        type="text"
+        id="search"
+        placeholder="🔎 ค้นหาอุปกรณ์..."
+        oninput="showItems()"
+      >
+
+      <div id="stockList"></div>
     </div>
 
   </div>
+
+  <script>
+    let stock = JSON.parse(localStorage.getItem("fieldStock")) || [];
+
+    function saveStock() {
+      localStorage.setItem("fieldStock", JSON.stringify(stock));
+    }
+
+    function addItem() {
+      const nameInput = document.getElementById("itemName");
+      const qtyInput = document.getElementById("itemQty");
+
+      const name = nameInput.value.trim();
+      const qty = Number(qtyInput.value);
+
+      if (!name) {
+        alert("กรุณากรอกชื่ออุปกรณ์");
+        return;
+      }
+
+      if (!qty || qty < 1) {
+        alert("กรุณากรอกจำนวนให้ถูกต้อง");
+        return;
+      }
+
+      const existing = stock.find(
+        item => item.name.toLowerCase() === name.toLowerCase()
+      );
+
+      if (existing) {
+        existing.qty += qty;
+      } else {
+        stock.push({
+          id: Date.now(),
+          name: name,
+          qty: qty
+        });
+      }
+
+      saveStock();
+
+      nameInput.value = "";
+      qtyInput.value = "";
+
+      showItems();
+    }
+
+    function increase(id) {
+      const item = stock.find(item => item.id === id);
+
+      if (item) {
+        item.qty++;
+        saveStock();
+        showItems();
+      }
+    }
+
+    function decrease(id) {
+      const item = stock.find(item => item.id === id);
+
+      if (item && item.qty > 0) {
+        item.qty--;
+
+        if (item.qty === 0) {
+          const confirmDelete = confirm(
+            "อุปกรณ์นี้เหลือ 0 ชิ้น ต้องการลบรายการหรือไม่?"
+          );
+
+          if (confirmDelete) {
+            stock = stock.filter(item => item.id !== id);
+          }
+        }
+
+        saveStock();
+        showItems();
+      }
+    }
+
+    function deleteItem(id) {
+      const confirmDelete = confirm("ต้องการลบรายการนี้หรือไม่?");
+
+      if (confirmDelete) {
+        stock = stock.filter(item => item.id !== id);
+        saveStock();
+        showItems();
+      }
+    }
+
+    function showItems() {
+      const list = document.getElementById("stockList");
+      const search = document
+        .getElementById("search")
+        .value
+        .toLowerCase();
+
+      const filtered = stock.filter(item =>
+        item.name.toLowerCase().includes(search)
+      );
+
+      list.innerHTML = "";
+
+      if (filtered.length === 0) {
+        list.innerHTML =
+          '<div class="empty">ยังไม่มีรายการอุปกรณ์</div>';
+      } else {
+        filtered.forEach(item => {
+          const div = document.createElement("div");
+
+          div.className = "stock-item";
+
+          div.innerHTML = `
+            <div class="stock-name">
+              ${item.name}
+            </div>
+
+            <div class="stock-number">
+              คงเหลือ: <b>${item.qty}</b> ชิ้น
+            </div>
+
+            <div class="actions">
+              <button
+                class="minus"
+                onclick="decrease(${item.id})">
+                − เบิก
+              </button>
+
+              <button
+                class="plus"
+                onclick="increase(${item.id})">
+                ＋ เพิ่ม
+              </button>
+
+              <button
+                class="delete"
+                onclick="deleteItem(${item.id})">
+                ลบ
+              </button>
+            </div>
+          `;
+
+          list.appendChild(div);
+        });
+      }
+
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const itemCount = stock.length;
+
+      const totalStock = stock.reduce(
+        (sum, item) => sum + item.qty,
+        0
+      );
+
+      document.getElementById("itemCount").textContent = itemCount;
+      document.getElementById("totalStock").textContent = totalStock;
+    }
+
+    showItems();
+  </script>
 
 </body>
 </html>
