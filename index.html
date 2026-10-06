@@ -291,6 +291,35 @@ label {
 
 </div>
 
+<!-- รับอุปกรณ์เข้า -->
+<div id="receivePage" class="hidden">
+
+  <div class="card">
+    <h2>📥 รับอุปกรณ์เข้า</h2>
+
+    <label>เลือกอุปกรณ์ *</label>
+    <select id="receiveItem"></select>
+
+    <label>จำนวนที่รับเข้า *</label>
+    <input id="receiveQuantity" type="number" min="1" placeholder="จำนวน">
+
+    <label>ผู้รับเข้า</label>
+    <input id="receivePerson" placeholder="ชื่อผู้รับเข้า">
+
+    <label>หมายเหตุ</label>
+    <textarea id="receiveNote" placeholder="เช่น รับของจากบริษัท / ซื้อเพิ่ม"></textarea>
+
+    <button class="btn-add" onclick="receiveItem()">
+      ✅ ยืนยันรับเข้า
+    </button>
+
+    <button class="btn-back" onclick="showPage('homePage')">
+      ↩️ กลับ
+    </button>
+  </div>
+
+</div>
+  
 <script>
 
 let stock = JSON.parse(localStorage.getItem("fieldStock")) || [];
