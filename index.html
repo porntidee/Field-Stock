@@ -49,40 +49,55 @@
     }
 
     .card h2 {
-      margin: 0 0 14px;
+      margin: 0 0 15px;
       font-size: 19px;
     }
 
-    input {
-      width: 100%;
-      padding: 13px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 16px;
-      margin-bottom: 10px;
+    label {
+      display: block;
+      font-size: 14px;
+      margin: 10px 0 5px;
+      font-weight: bold;
     }
 
-    button {
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d8dce0;
+      border-radius: 8px;
+      font-size: 16px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .btn {
+      width: 100%;
       border: none;
       border-radius: 8px;
-      padding: 11px 14px;
-      font-size: 15px;
+      padding: 13px;
+      margin-top: 14px;
+      font-size: 16px;
       cursor: pointer;
     }
 
-    .btn-add {
-      width: 100%;
+    .btn-primary {
       background: #1565c0;
       color: white;
-      padding: 13px;
     }
 
-    .search {
-      margin-bottom: 0;
+    .btn-secondary {
+      background: #e9eef5;
+      color: #333;
     }
 
     .stock-item {
-      border: 1px solid #e1e5e8;
+      border: 1px solid #e0e4e8;
       border-radius: 10px;
       padding: 13px;
       margin-bottom: 10px;
@@ -91,42 +106,23 @@
     .stock-name {
       font-size: 17px;
       font-weight: bold;
-      margin-bottom: 5px;
     }
 
-    .stock-number {
-      font-size: 15px;
-      margin-bottom: 10px;
-    }
-
-    .actions {
-      display: flex;
-      gap: 7px;
-    }
-
-    .actions button {
-      flex: 1;
-    }
-
-    .minus {
-      background: #e53935;
-      color: white;
-    }
-
-    .plus {
-      background: #2e7d32;
-      color: white;
-    }
-
-    .delete {
-      background: #757575;
-      color: white;
+    .stock-detail {
+      font-size: 14px;
+      color: #666;
+      margin-top: 5px;
+      line-height: 1.6;
     }
 
     .empty {
       text-align: center;
       color: #888;
-      padding: 20px 5px;
+      padding: 20px;
+    }
+
+    .hidden {
+      display: none;
     }
 
     .summary {
@@ -146,7 +142,6 @@
       display: block;
       font-size: 24px;
       font-weight: bold;
-      margin-bottom: 4px;
     }
   </style>
 </head>
@@ -160,219 +155,388 @@
 
   <div class="container">
 
+    <!-- เมนู -->
+    <div class="card">
+      <h2>📋 จัดการสต๊อก</h2>
+
+      <button class="btn btn-primary" onclick="showAddForm()">
+        ➕ เพิ่มอุปกรณ์
+      </button>
+
+      <button class="btn btn-secondary" onclick="showStock()">
+        📦 ดูรายการอุปกรณ์
+      </button>
+    </div>
+
+
+    <!-- สรุป -->
     <div class="card">
       <h2>📊 สรุปสต๊อก</h2>
 
       <div class="summary">
+
         <div class="summary-box">
           <span class="summary-number" id="itemCount">0</span>
           รายการ
         </div>
 
         <div class="summary-box">
-          <span class="summary-number" id="totalStock">0</span>
+          <span class="summary-number" id="totalQty">0</span>
           ชิ้น
         </div>
+
       </div>
     </div>
 
-    <div class="card">
+
+    <!-- เพิ่มอุปกรณ์ -->
+    <div class="card hidden" id="addForm">
+
       <h2>➕ เพิ่มอุปกรณ์</h2>
 
+      <label>ชื่ออุปกรณ์ *</label>
       <input
         type="text"
-        id="itemName"
-        placeholder="ชื่ออุปกรณ์ เช่น MRV336"
+        id="name"
+        placeholder="เช่น Receiving Card"
       >
 
+      <label>รุ่น / Model</label>
+      <input
+        type="text"
+        id="model"
+        placeholder="เช่น MRV336"
+      >
+
+      <label>จำนวน *</label>
       <input
         type="number"
-        id="itemQty"
-        placeholder="จำนวน"
+        id="quantity"
         min="1"
+        placeholder="เช่น 10"
       >
 
-      <button class="btn-add" onclick="addItem()">
-        เพิ่มเข้าสต๊อก
+      <label>หน่วย</label>
+      <select id="unit">
+        <option value="ชิ้น">ชิ้น</option>
+        <option value="ตัว">ตัว</option>
+        <option value="ชุด">ชุด</option>
+        <option value="อัน">อัน</option>
+        <option value="เส้น">เส้น</option>
+        <option value="กล่อง">กล่อง</option>
+      </select>
+
+      <label>ตำแหน่งจัดเก็บ</label>
+      <input
+        type="text"
+        id="location"
+        placeholder="เช่น ห้องเก็บของ / ตู้ A"
+      >
+
+      <label>หมายเหตุ</label>
+      <textarea
+        id="note"
+        placeholder="รายละเอียดเพิ่มเติม"
+      ></textarea>
+
+      <button
+        class="btn btn-primary"
+        onclick="addEquipment()">
+        💾 บันทึกอุปกรณ์
       </button>
+
+      <button
+        class="btn btn-secondary"
+        onclick="hideAddForm()">
+        ยกเลิก
+      </button>
+
     </div>
 
-    <div class="card">
+
+    <!-- รายการอุปกรณ์ -->
+    <div class="card hidden" id="stockPage">
+
       <h2>📦 รายการอุปกรณ์</h2>
 
       <input
-        class="search"
         type="text"
         id="search"
         placeholder="🔎 ค้นหาอุปกรณ์..."
-        oninput="showItems()"
+        oninput="showStock()"
       >
 
+      <br><br>
+
       <div id="stockList"></div>
+
     </div>
 
   </div>
 
-  <script>
-    let stock = JSON.parse(localStorage.getItem("fieldStock")) || [];
 
-    function saveStock() {
-      localStorage.setItem("fieldStock", JSON.stringify(stock));
+<script>
+
+  // โหลดข้อมูลจากเครื่อง
+  let equipment =
+    JSON.parse(localStorage.getItem("fieldStock")) || [];
+
+
+  // บันทึกข้อมูล
+  function saveData() {
+
+    localStorage.setItem(
+      "fieldStock",
+      JSON.stringify(equipment)
+    );
+
+  }
+
+
+  // เปิดหน้าเพิ่มอุปกรณ์
+  function showAddForm() {
+
+    document
+      .getElementById("addForm")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("stockPage")
+      .classList.add("hidden");
+
+    window.scrollTo({
+      top: document.getElementById("addForm").offsetTop,
+      behavior: "smooth"
+    });
+
+  }
+
+
+  // ปิดหน้าเพิ่ม
+  function hideAddForm() {
+
+    document
+      .getElementById("addForm")
+      .classList.add("hidden");
+
+  }
+
+
+  // เพิ่มอุปกรณ์
+  function addEquipment() {
+
+    const name =
+      document.getElementById("name").value.trim();
+
+    const model =
+      document.getElementById("model").value.trim();
+
+    const quantity =
+      Number(document.getElementById("quantity").value);
+
+    const unit =
+      document.getElementById("unit").value;
+
+    const location =
+      document.getElementById("location").value.trim();
+
+    const note =
+      document.getElementById("note").value.trim();
+
+
+    // ตรวจสอบข้อมูล
+    if (!name) {
+
+      alert("กรุณากรอกชื่ออุปกรณ์");
+
+      return;
     }
 
-    function addItem() {
-      const nameInput = document.getElementById("itemName");
-      const qtyInput = document.getElementById("itemQty");
 
-      const name = nameInput.value.trim();
-      const qty = Number(qtyInput.value);
+    if (!quantity || quantity < 1) {
 
-      if (!name) {
-        alert("กรุณากรอกชื่ออุปกรณ์");
-        return;
-      }
+      alert("กรุณากรอกจำนวนให้ถูกต้อง");
 
-      if (!qty || qty < 1) {
-        alert("กรุณากรอกจำนวนให้ถูกต้อง");
-        return;
-      }
-
-      const existing = stock.find(
-        item => item.name.toLowerCase() === name.toLowerCase()
-      );
-
-      if (existing) {
-        existing.qty += qty;
-      } else {
-        stock.push({
-          id: Date.now(),
-          name: name,
-          qty: qty
-        });
-      }
-
-      saveStock();
-
-      nameInput.value = "";
-      qtyInput.value = "";
-
-      showItems();
+      return;
     }
 
-    function increase(id) {
-      const item = stock.find(item => item.id === id);
 
-      if (item) {
-        item.qty++;
-        saveStock();
-        showItems();
-      }
-    }
+    // สร้างรายการใหม่
+    const newEquipment = {
 
-    function decrease(id) {
-      const item = stock.find(item => item.id === id);
+      id: Date.now(),
 
-      if (item && item.qty > 0) {
-        item.qty--;
+      name: name,
 
-        if (item.qty === 0) {
-          const confirmDelete = confirm(
-            "อุปกรณ์นี้เหลือ 0 ชิ้น ต้องการลบรายการหรือไม่?"
-          );
+      model: model,
 
-          if (confirmDelete) {
-            stock = stock.filter(item => item.id !== id);
-          }
-        }
+      quantity: quantity,
 
-        saveStock();
-        showItems();
-      }
-    }
+      unit: unit,
 
-    function deleteItem(id) {
-      const confirmDelete = confirm("ต้องการลบรายการนี้หรือไม่?");
+      location: location,
 
-      if (confirmDelete) {
-        stock = stock.filter(item => item.id !== id);
-        saveStock();
-        showItems();
-      }
-    }
+      note: note,
 
-    function showItems() {
-      const list = document.getElementById("stockList");
-      const search = document
+      createdAt:
+        new Date().toLocaleString("th-TH")
+
+    };
+
+
+    equipment.push(newEquipment);
+
+
+    // บันทึก
+    saveData();
+
+
+    // ล้างแบบฟอร์ม
+    document.getElementById("name").value = "";
+    document.getElementById("model").value = "";
+    document.getElementById("quantity").value = "";
+    document.getElementById("location").value = "";
+    document.getElementById("note").value = "";
+
+
+    updateSummary();
+
+
+    alert("เพิ่มอุปกรณ์เรียบร้อยแล้ว");
+
+
+    showStock();
+
+  }
+
+
+  // แสดงรายการ
+  function showStock() {
+
+    document
+      .getElementById("stockPage")
+      .classList.remove("hidden");
+
+
+    const search =
+      document
         .getElementById("search")
         .value
         .toLowerCase();
 
-      const filtered = stock.filter(item =>
-        item.name.toLowerCase().includes(search)
+
+    const list =
+      document.getElementById("stockList");
+
+
+    const filtered =
+      equipment.filter(item =>
+
+        item.name
+          .toLowerCase()
+          .includes(search)
+
+        ||
+
+        item.model
+          .toLowerCase()
+          .includes(search)
+
       );
 
-      list.innerHTML = "";
 
-      if (filtered.length === 0) {
-        list.innerHTML =
-          '<div class="empty">ยังไม่มีรายการอุปกรณ์</div>';
-      } else {
-        filtered.forEach(item => {
-          const div = document.createElement("div");
+    list.innerHTML = "";
 
-          div.className = "stock-item";
 
-          div.innerHTML = `
-            <div class="stock-name">
-              ${item.name}
-            </div>
+    if (filtered.length === 0) {
 
-            <div class="stock-number">
-              คงเหลือ: <b>${item.qty}</b> ชิ้น
-            </div>
+      list.innerHTML =
+        '<div class="empty">ยังไม่มีอุปกรณ์ในสต๊อก</div>';
 
-            <div class="actions">
-              <button
-                class="minus"
-                onclick="decrease(${item.id})">
-                − เบิก
-              </button>
-
-              <button
-                class="plus"
-                onclick="increase(${item.id})">
-                ＋ เพิ่ม
-              </button>
-
-              <button
-                class="delete"
-                onclick="deleteItem(${item.id})">
-                ลบ
-              </button>
-            </div>
-          `;
-
-          list.appendChild(div);
-        });
-      }
-
-      updateSummary();
+      return;
     }
 
-    function updateSummary() {
-      const itemCount = stock.length;
 
-      const totalStock = stock.reduce(
-        (sum, item) => sum + item.qty,
+    filtered.forEach(item => {
+
+      const div =
+        document.createElement("div");
+
+      div.className = "stock-item";
+
+
+      div.innerHTML = `
+
+        <div class="stock-name">
+          ${item.name}
+        </div>
+
+        <div class="stock-detail">
+
+          รุ่น: ${item.model || "-"}<br>
+
+          จำนวน: <b>
+            ${item.quantity}
+          </b> ${item.unit}<br>
+
+          จัดเก็บที่:
+          ${item.location || "-"}<br>
+
+          หมายเหตุ:
+          ${item.note || "-"}<br>
+
+          เพิ่มเมื่อ:
+          ${item.createdAt}
+
+        </div>
+
+      `;
+
+
+      list.appendChild(div);
+
+    });
+
+
+    updateSummary();
+
+  }
+
+
+  // สรุปจำนวน
+  function updateSummary() {
+
+    const itemCount =
+      equipment.length;
+
+
+    const totalQty =
+      equipment.reduce(
+
+        (sum, item) =>
+          sum + Number(item.quantity),
+
         0
+
       );
 
-      document.getElementById("itemCount").textContent = itemCount;
-      document.getElementById("totalStock").textContent = totalStock;
-    }
 
-    showItems();
-  </script>
+    document
+      .getElementById("itemCount")
+      .textContent = itemCount;
+
+
+    document
+      .getElementById("totalQty")
+      .textContent = totalQty;
+
+  }
+
+
+  // เริ่มต้น
+  updateSummary();
+
+</script>
 
 </body>
 </html>
