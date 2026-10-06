@@ -540,6 +540,52 @@ function showStock() {
 }
 
 
+/* แสดงประวัติการเบิก */
+function showHistory() {
+
+  const list = document.getElementById("historyList");
+
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  const issueHistory =
+    JSON.parse(localStorage.getItem("issueHistory")) || [];
+
+  if (issueHistory.length === 0) {
+
+    list.innerHTML = "<p>ยังไม่มีประวัติการเบิก</p>";
+
+  } else {
+
+    issueHistory
+      .slice()
+      .reverse()
+      .forEach(history => {
+
+        const div = document.createElement("div");
+
+        div.className = "item";
+
+        div.innerHTML = `
+          <strong>📦 ${history.itemName}</strong><br>
+          ${history.model ? "รุ่น: " + history.model + "<br>" : ""}
+          <b>เบิก: ${history.quantity} ${history.unit}</b><br>
+          ${history.person ? "👤 ผู้เบิก: " + history.person + "<br>" : ""}
+          ${history.location ? "📍 หน้างาน: " + history.location + "<br>" : ""}
+          🕐 วันที่: ${history.date}<br>
+          ${history.note ? "📝 " + history.note : ""}
+        `;
+
+        list.appendChild(div);
+
+      });
+
+  }
+
+  showPage("historyPage");
+}
+
 /* บันทึกสต๊อก */
 function saveStock() {
 
