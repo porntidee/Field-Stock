@@ -973,13 +973,22 @@ function showExcelPreview() {
 function importExcel() {
 
   if (!excelData || excelData.length === 0) {
-
     alert("ไม่พบข้อมูลสำหรับนำเข้า");
-
     return;
   }
 
+  const normalizeText = (value) => {
+    return String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "");
+  };
+
   let importedCount = 0;
+
+  // โหลดประวัติรับเข้าเดิมครั้งเดียว
+  const receiveHistory =
+    JSON.parse(localStorage.getItem("receiveHistory")) || [];
 
   excelData.forEach((row, index) => {
 
@@ -988,44 +997,42 @@ function importExcel() {
       return;
     }
 
-    // ตรวจสอบว่ามีอุปกรณ์นี้อยู่แล้วหรือไม่
-   const existingItem = stock.find(item => {
+    // ตรวจสอบอุปกรณ์ที่มีอยู่แล้ว
+    const existingItem = stock.find(item => {
 
-  const normalizeText = (value) => {
-  return String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "");
-};
+      const stockName = normalizeText(item.name);
+      const excelName = normalizeText(row.name);
 
-const existingItem = stock.find(item => {
+      const stockModel = normalizeText(item.model);
+      const excelModel = normalizeText(row.model);
 
-  const stockName =
-    normalizeText(item.name);
+      return (
+        stockName === excelName &&
+        stockModel === excelModel
+      );
+    });
 
-  const excelName =
-    normalizeText(row.name);
+    if (existingItem) {
 
-  const stockModel =
-    normalizeText(item.model);
+      // ถ้ามีอยู่แล้ว ให้เพิ่มจำนวนเข้ารายการเดิม
+      existingItem.quantity += row.quantity;
 
-  const excelModel =
-    normalizeText(row.model);
+    } else {
 
-  return (
-    stockName === excelName &&
-    stockModel === excelModel
-  );
-
-});
+      // ถ้ายังไม่มี ให้สร้างรายการใหม่
+      stock.push({
+        id: Date.now() + index,
+        name: row.name,
+        model: row.model,
+        quantity: row.quantity,
+        unit: row.unit || "ชิ้น",
+        location: row.location,
+        note: row.note,
+        createdAt: new Date().toLocaleString("th-TH")
+      });
     }
 
     // บันทึกประวัติรับเข้า
-    const receiveHistory =
-      JSON.parse(
-        localStorage.getItem("receiveHistory")
-      ) || [];
-
     receiveHistory.push({
 
       id: Date.now() + index,
@@ -1039,17 +1046,16 @@ const existingItem = stock.find(item => {
       note: row.note || "",
 
       date: new Date().toLocaleString("th-TH")
-
     });
 
-    localStorage.setItem(
-      "receiveHistory",
-      JSON.stringify(receiveHistory)
-    );
-
     importedCount++;
-
   });
+
+  // บันทึกประวัติรับเข้า
+  localStorage.setItem(
+    "receiveHistory",
+    JSON.stringify(receiveHistory)
+  );
 
   // บันทึกสต๊อก
   saveStock();
@@ -1063,7 +1069,6 @@ const existingItem = stock.find(item => {
 
   // กลับหน้าหลัก
   showPage("homePage");
-
 }
 
   
