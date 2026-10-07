@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Field Stock</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
 * { box-sizing: border-box; }
@@ -133,6 +134,10 @@ label { font-weight: bold; }
 
       <button class="btn-add" onclick="showReceiveHistory()">
         📋 ประวัติการรับเข้า
+      </button>
+    
+      <button class="btn-list" onclick="showImportPage()">
+        📥 นำเข้า Excel
       </button>
     </div>
 
@@ -277,6 +282,42 @@ label { font-weight: bold; }
     </div>
   </div>
 
+
+ <!-- นำเข้า Excel -->
+  <div id="importPage" class="hidden">
+    <div class="card">
+
+      <h2>📥 นำเข้าอุปกรณ์จาก Excel</h2>
+
+      <p>เลือกไฟล์ Excel ที่ต้องการนำเข้า</p>
+
+      <input
+        type="file"
+        id="excelFile"
+        accept=".xlsx,.xls"
+        onchange="previewExcel()"
+      >
+
+      <div id="excelPreview"></div>
+
+      <button
+        id="importExcelButton"
+        class="btn-add hidden"
+        onclick="importExcel()"
+      >
+        📦 นำเข้าสินค้าทั้งหมด
+      </button>
+
+      <button
+        class="btn-back"
+        onclick="showPage('homePage')"
+      >
+        ↩️ กลับ
+      </button>
+
+    </div>
+  </div>
+  
 </div>
 
 
@@ -296,6 +337,7 @@ function showPage(pageId) {
     "historyPage",
     "receivePage",
     "receiveHistoryPage"
+    "importPage"
   ];
 
   pages.forEach(id => {
@@ -729,7 +771,309 @@ function showReceiveHistory() {
   showPage("receiveHistoryPage");
 }
 
+/* =========================
+   ระบบนำเข้า Excel
+========================= */
 
+let excelData = [];
+
+
+/* เปิดหน้านำเข้า Excel */
+function showImportPage() {
+
+  excelData = [];
+
+  document.getElementById("excelFile").value = "";
+  document.getElementById("excelPreview").innerHTML = "";
+
+  document
+    .getElementById("importExcelButton")
+    .classList.add("hidden");
+
+  showPage("importPage");
+}
+
+/* อ่านไฟล์ Excel */
+function previewExcel() {
+
+  const fileInput =
+    document.getElementById("excelFile");
+
+  const file = fileInput.files[0];
+
+  if (!file) {
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+
+    try {
+
+      const data =
+        new Uint8Array(e.target.result);
+
+      const workbook =
+        XLSX.read(data, {
+          type: "array"
+        });
+
+      const sheetName =
+        workbook.SheetNames[0];
+
+      const worksheet =
+        workbook.Sheets[sheetName];
+
+      const rows =
+        XLSX.utils.sheet_to_json(
+          worksheet,
+          { defval: "" }
+        );
+
+      if (rows.length === 0) {
+
+        alert("ไม่พบข้อมูลในไฟล์ Excel");
+
+        return;
+      }
+
+      excelData = rows.map(row => {
+
+        return {
+
+          name:
+            String(
+              row["ชื่ออุปกรณ์"] || ""
+            ).trim(),
+
+          model:
+            String(
+              row["รุ่น"] ||
+              row["รุ่น / Model"] ||
+              ""
+            ).trim(),
+
+          quantity:
+            Number(
+              row["จำนวน"] || 0
+            ),
+
+          unit:
+            String(
+              row["หน่วย"] ||
+              "ชิ้น"
+            ).trim(),
+
+          location:
+            String(
+              row["ตำแหน่งจัดเก็บ"] ||
+              row["สถานที่"] ||
+              ""
+            ).trim(),
+
+          note:
+            String(
+              row["หมายเหตุ"] || ""
+            ).trim()
+
+        };
+
+      });
+
+      showExcelPreview();
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "ไม่สามารถอ่านไฟล์ Excel ได้"
+      );
+
+    }
+
+  };
+
+  reader.readAsArrayBuffer(file);
+}
+
+/* แสดงตัวอย่างข้อมูล Excel */
+function showExcelPreview() {
+
+  const preview =
+    document.getElementById("excelPreview");
+
+  if (!excelData || excelData.length === 0) {
+
+    preview.innerHTML =
+      "<p>ไม่พบข้อมูล</p>";
+
+    return;
+  }
+
+  let html = `
+    <h3>ตัวอย่างข้อมูลที่จะนำเข้า</h3>
+
+    <div style="overflow-x:auto;">
+      <table border="1" cellpadding="8" cellspacing="0"
+             style="width:100%; border-collapse:collapse;">
+
+        <tr>
+          <th>ชื่ออุปกรณ์</th>
+          <th>รุ่น</th>
+          <th>จำนวน</th>
+          <th>หน่วย</th>
+          <th>ตำแหน่งจัดเก็บ</th>
+          <th>หมายเหตุ</th>
+        </tr>
+  `;
+
+  excelData.forEach(row => {
+
+    html += `
+      <tr>
+
+        <td>${row.name}</td>
+
+        <td>${row.model}</td>
+
+        <td>${row.quantity}</td>
+
+        <td>${row.unit}</td>
+
+        <td>${row.location}</td>
+
+        <td>${row.note}</td>
+
+      </tr>
+    `;
+
+  });
+
+  html += `
+      </table>
+    </div>
+
+    <p>
+      พบข้อมูลทั้งหมด
+      <strong>${excelData.length}</strong>
+      รายการ
+    </p>
+  `;
+
+  preview.innerHTML = html;
+
+  document
+    .getElementById("importExcelButton")
+    .classList.remove("hidden");
+}
+  
+/* นำเข้าข้อมูลจาก Excel */
+function importExcel() {
+
+  if (!excelData || excelData.length === 0) {
+
+    alert("ไม่พบข้อมูลสำหรับนำเข้า");
+
+    return;
+  }
+
+  let importedCount = 0;
+
+  excelData.forEach((row, index) => {
+
+    // ข้ามแถวที่ไม่มีชื่ออุปกรณ์
+    if (!row.name) {
+      return;
+    }
+
+    // ตรวจสอบว่ามีอุปกรณ์นี้อยู่แล้วหรือไม่
+    const existingItem = stock.find(item =>
+      String(item.name).trim().toLowerCase() ===
+        String(row.name).trim().toLowerCase()
+      &&
+      String(item.model || "").trim().toLowerCase() ===
+        String(row.model || "").trim().toLowerCase()
+    );
+
+    if (existingItem) {
+
+      // ถ้ามีอยู่แล้ว ให้เพิ่มจำนวนเข้าไป
+      existingItem.quantity += row.quantity;
+
+    } else {
+
+      // ถ้ายังไม่มี ให้สร้างรายการใหม่
+      stock.push({
+
+        id: Date.now() + index,
+
+        name: row.name,
+
+        model: row.model,
+
+        quantity: row.quantity,
+
+        unit: row.unit || "ชิ้น",
+
+        location: row.location,
+
+        note: row.note,
+
+        createdAt: new Date().toLocaleString("th-TH")
+
+      });
+
+    }
+
+    // บันทึกประวัติรับเข้า
+    const receiveHistory =
+      JSON.parse(
+        localStorage.getItem("receiveHistory")
+      ) || [];
+
+    receiveHistory.push({
+
+      id: Date.now() + index,
+
+      itemName: row.name,
+
+      quantity: row.quantity,
+
+      person: "นำเข้าจาก Excel",
+
+      note: row.note || "",
+
+      date: new Date().toLocaleString("th-TH")
+
+    });
+
+    localStorage.setItem(
+      "receiveHistory",
+      JSON.stringify(receiveHistory)
+    );
+
+    importedCount++;
+
+  });
+
+  // บันทึกสต๊อก
+  saveStock();
+
+  alert(
+    "นำเข้าข้อมูลสำเร็จ\n" +
+    "จำนวน " +
+    importedCount +
+    " รายการ"
+  );
+
+  // กลับหน้าหลัก
+  showPage("homePage");
+
+}
+
+  
 /* บันทึกสต๊อก */
 function saveStock() {
 
