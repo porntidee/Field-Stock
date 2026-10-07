@@ -991,25 +991,26 @@ function importExcel() {
     // ตรวจสอบว่ามีอุปกรณ์นี้อยู่แล้วหรือไม่
    const existingItem = stock.find(item => {
 
+  const normalizeText = (value) => {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "");
+};
+
+const existingItem = stock.find(item => {
+
   const stockName =
-    String(item.name || "")
-      .trim()
-      .toLowerCase();
+    normalizeText(item.name);
 
   const excelName =
-    String(row.name || "")
-      .trim()
-      .toLowerCase();
+    normalizeText(row.name);
 
   const stockModel =
-    String(item.model || "")
-      .trim()
-      .toLowerCase();
+    normalizeText(item.model);
 
   const excelModel =
-    String(row.model || "")
-      .trim()
-      .toLowerCase();
+    normalizeText(row.model);
 
   return (
     stockName === excelName &&
@@ -1017,35 +1018,6 @@ function importExcel() {
   );
 
 });
-
-    if (existingItem) {
-
-      // ถ้ามีอยู่แล้ว ให้เพิ่มจำนวนเข้าไป
-      existingItem.quantity += row.quantity;
-
-    } else {
-
-      // ถ้ายังไม่มี ให้สร้างรายการใหม่
-      stock.push({
-
-        id: Date.now() + index,
-
-        name: row.name,
-
-        model: row.model,
-
-        quantity: row.quantity,
-
-        unit: row.unit || "ชิ้น",
-
-        location: row.location,
-
-        note: row.note,
-
-        createdAt: new Date().toLocaleString("th-TH")
-
-      });
-
     }
 
     // บันทึกประวัติรับเข้า
