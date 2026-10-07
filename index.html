@@ -325,39 +325,6 @@ label { font-weight: bold; }
 
 let stock = JSON.parse(localStorage.getItem("fieldStock")) || [];
 
-// รวมรายการที่ซ้ำกันทั้งหมด
-const stockGroups = {};
-
-stock.forEach(item => {
-
-  const name = String(item.name || "")
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "");
-
-  const model = String(item.model || "")
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "");
-
-  const key = name + "|" + model;
-
-  if (!stockGroups[key]) {
-
-    stockGroups[key] = {
-      ...item,
-      quantity: Number(item.quantity) || 0
-    };
-
-  } else {
-
-    stockGroups[key].quantity +=
-      Number(item.quantity) || 0;
-
-  }
-
-});
-
 // แทนที่รายการซ้ำด้วยรายการที่รวมแล้ว
 stock = Object.values(stockGroups);
 
