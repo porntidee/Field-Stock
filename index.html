@@ -989,13 +989,34 @@ function importExcel() {
     }
 
     // ตรวจสอบว่ามีอุปกรณ์นี้อยู่แล้วหรือไม่
-    const existingItem = stock.find(item =>
-      String(item.name).trim().toLowerCase() ===
-        String(row.name).trim().toLowerCase()
-      &&
-      String(item.model || "").trim().toLowerCase() ===
-        String(row.model || "").trim().toLowerCase()
-    );
+   const existingItem = stock.find(item => {
+
+  const stockName =
+    String(item.name || "")
+      .trim()
+      .toLowerCase();
+
+  const excelName =
+    String(row.name || "")
+      .trim()
+      .toLowerCase();
+
+  const stockModel =
+    String(item.model || "")
+      .trim()
+      .toLowerCase();
+
+  const excelModel =
+    String(row.model || "")
+      .trim()
+      .toLowerCase();
+
+  return (
+    stockName === excelName &&
+    stockModel === excelModel
+  );
+
+});
 
     if (existingItem) {
 
