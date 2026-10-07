@@ -532,9 +532,53 @@ function issueItem() {
 
 
 /* แสดงสต๊อก */
+/* แสดงสต๊อก */
 function showStock() {
   showPage("stockPage");
+  mergeDuplicateStock();
   renderStock();
+}
+
+
+/* รวมรายการสต๊อกที่ซ้ำกัน */
+function mergeDuplicateStock() {
+
+  const groups = {};
+
+  stock.forEach(item => {
+
+    const name = String(item.name || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "");
+
+    const model = String(item.model || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "");
+
+    const key = name + "|" + model;
+
+    if (!groups[key]) {
+
+      groups[key] = {
+        ...item,
+        quantity: Number(item.quantity) || 0
+      };
+
+    } else {
+
+      groups[key].quantity +=
+        Number(item.quantity) || 0;
+    }
+  });
+
+  stock = Object.values(groups);
+
+  localStorage.setItem(
+    "fieldStock",
+    JSON.stringify(stock)
+  );
 }
 
 
@@ -544,15 +588,20 @@ function renderStock() {
   const search =
     document.getElementById("search")?.value.toLowerCase() || "";
 
-  const list = document.getElementById("stockList");
+  const list =
+    document.getElementById("stockList");
 
   if (!list) return;
 
   list.innerHTML = "";
 
   const filtered = stock.filter(item =>
-    String(item.name || "").toLowerCase().includes(search) ||
-    String(item.model || "").toLowerCase().includes(search)
+    String(item.name || "")
+      .toLowerCase()
+      .includes(search) ||
+    String(item.model || "")
+      .toLowerCase()
+      .includes(search)
   );
 
   if (filtered.length === 0) {
@@ -563,7 +612,8 @@ function renderStock() {
 
     filtered.forEach(item => {
 
-      const div = document.createElement("div");
+      const div =
+        document.createElement("div");
 
       div.className = "item";
 
@@ -579,7 +629,6 @@ function renderStock() {
     });
   }
 }
-
 
 /* แสดงประวัติการเบิก */
 function showHistory() {
